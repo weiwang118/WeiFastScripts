@@ -1,0 +1,10 @@
+.cdk.staging
+cdk.out
+cdk-outputs.json
+
+__pycache__
+*.egg-info
+.pytest_cache
+.venv
+*.zip
+*.DS_STORE

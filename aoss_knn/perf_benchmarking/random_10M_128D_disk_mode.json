@@ -1,0 +1,34 @@
+{
+  "target_index_name": "disk_mode_index_128d_10M",
+  "target_field_name": "target_field",
+  "target_index_body": "indices/faiss-index.json",
+  "target_index_dimension": 128,
+  "target_index_space_type": "l2",
+  "target_index_bulk_size": 500,
+  "id_field_name": "id",
+  "mode": "on_disk",
+  "target_index_bulk_index_data_set_format": "hdf5",
+  "target_index_bulk_index_data_set_path": "/home/ec2-user/data/random-s-128-10M-euclidean.hdf5",
+  "target_index_bulk_index_clients": 5,
+  "hnsw_ef_search": 100,
+  "hnsw_ef_construction": 100,
+  "hnsw_m": 16,
+  "target_index_num_vectors": 1000000,
+  "starting_offset": 0,
+  "timeout": 1200,
+  "ramp_up_time_period": 100,
+  "wait_time_in_sec": 300,
+  "query_count": 10000,
+  "query_k": 100,
+  "query_body": {
+    "docvalue_fields": [
+      "id"
+    ],
+    "stored_fields": "_none_"
+  },
+  "query_data_set_format": "hdf5",
+  "neighbors_data_set_format": "hdf5",
+  "query_data_set_path": "/home/ec2-user/data/random-s-128-10M-euclidean.hdf5",
+  "neighbors_data_set_path": "/home/ec2-user/data/random-s-128-10M-euclidean.hdf5"
+}
+
