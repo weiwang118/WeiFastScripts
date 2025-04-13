@@ -189,7 +189,7 @@ if [ "$DO_SEARCH" = true ]; then
   echo "Starting search"
   echo "==================================================================="
 
-  results_file="~/${SCENARIO}_search.out"
+  results_file="$HOME/${SCENARIO}_search.out"
 
   opensearch-benchmark execute-test \
     --workload=vectorsearch \
