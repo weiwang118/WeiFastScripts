@@ -19,7 +19,7 @@ with open(result_file, 'r') as f:
     result_text = f.read()
 
 index_name = params.get("target_index_name", "unknown")
-dataset = params.get("target_index_bulk_index_data_set_path", "unknown")
+dataset = params.get("target_index_bulk_index_data_set_path") or params.get("target_index_bulk_index_data_set_corpus", "unknown")
 index_dimension = params.get("target_index_dimension", "unknown")
 index_space_type = params.get("target_index_space_type", "unknown")
 mode = params.get("mode", "in_memory")
