@@ -1,5 +1,5 @@
 {
-  "target_index_name": "disk_mode_index_128d_10M",
+  "target_index_name": "random_disk_index_128d_10m",
   "target_field_name": "target_field",
   "target_index_body": "indices/faiss-index.json",
   "target_index_dimension": 128,

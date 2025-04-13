@@ -1,5 +1,5 @@
 {
-  "target_index_name": "in_memory_index_128d_100M",
+  "target_index_name": "random_inmemory_index_128d_100m",
   "target_field_name": "target_field",
   "target_index_body": "indices/faiss-index.json",
   "target_index_dimension": 128,
