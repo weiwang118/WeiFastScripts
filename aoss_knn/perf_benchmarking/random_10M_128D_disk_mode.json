@@ -9,7 +9,7 @@
   "mode": "on_disk",
   "target_index_bulk_index_data_set_format": "hdf5",
   "target_index_bulk_index_data_set_path": "/home/ec2-user/data/random-s-128-10M-euclidean.hdf5",
-  "target_index_bulk_index_clients": 5,
+  "target_index_bulk_indexing_clients": 5,
   "hnsw_ef_search": 100,
   "hnsw_ef_construction": 100,
   "hnsw_m": 16,
