@@ -55,13 +55,13 @@ fi
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 # Configuration - use environment variables if available, otherwise use defaults
 # TOTAL_VECTORS=${TOTAL_VECTORS:-10000000}         # Total vectors to ingest
-TOTAL_VECTORS=${TOTAL_VECTORS:-10000000}         # Total vectors to ingest
-BATCH_SIZE=${BATCH_SIZE:-1000000}                # Vectors per batch
+TOTAL_VECTORS=${TOTAL_VECTORS:-1000000}         # Total vectors to ingest
+BATCH_SIZE=${BATCH_SIZE:-250000}                # Vectors per batch
 SLEEP_TIME=${SLEEP_TIME:-120}                     # Sleep time in seconds between batches
-PARAMS_FILE=${PARAMS_FILE:-"case2_100M_128d_params.json"}
+PARAMS_FILE=${PARAMS_FILE:-"params/mxbai-msmarco_1M_1024D_disk_mode.json"}
 DISTRIBUTION_VERSION=${DISTRIBUTION_VERSION:-"2.17.0-beta"}
 AWS_REGION=${AWS_REGION:-"us-east-1"}
-SCENARIO_BASE=${SCENARIO:-"10M_128D_217beta"}
+SCENARIO_BASE=${SCENARIO:-"mxbai_disk_217beta"}
 SCENARIO="${SCENARIO_BASE}_${TIMESTAMP}"  # Add timestamp to scenario name
 VERSION_TAG=${VERSION_TAG:-"217-beta"}
 
