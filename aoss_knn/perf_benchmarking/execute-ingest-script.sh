@@ -56,7 +56,7 @@ TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 # Configuration - use environment variables if available, otherwise use defaults
 # TOTAL_VECTORS=${TOTAL_VECTORS:-10000000}         # Total vectors to ingest
 TOTAL_VECTORS=${TOTAL_VECTORS:-1000000}         # Total vectors to ingest
-BATCH_SIZE=${BATCH_SIZE:-250000}                # Vectors per batch
+BATCH_SIZE=${BATCH_SIZE:-1000000}                # Vectors per batch
 SLEEP_TIME=${SLEEP_TIME:-120}                     # Sleep time in seconds between batches
 PARAMS_FILE=${PARAMS_FILE:-"params/mxbai-msmarco_1M_1024D_disk_mode.json"}
 DISTRIBUTION_VERSION=${DISTRIBUTION_VERSION:-"2.17.0-beta"}
@@ -148,7 +148,7 @@ if [ "$DO_INGESTION" = true ]; then
     results_file="~/${SCENARIO}_indexing_batch_${batch_num}.out"
 
     # Build the user tag with the batch number
-    user_tag="scenario:$SCENARIO,procedure:knn-batch-ingest,version:$VERSION_TAG,batch-ingest:true,batch:${batch_num}_of_${total_batches},dataset:100M"
+    user_tag="scenario:$SCENARIO,procedure:knn-batch-ingest,version:$VERSION_TAG,batch-ingest:true,batch:${batch_num}_of_${total_batches},dataset:${PARAMS_FILE}"
 
     echo "Executing benchmark for batch $batch_num..."
     opensearch-benchmark execute-test \
@@ -190,6 +190,7 @@ if [ "$DO_SEARCH" = true ]; then
   echo "==================================================================="
 
   results_file="$HOME/${SCENARIO}_search.out"
+  user_tag="scenario:$SCENARIO,procedure:search,version:$VERSION_TAG,dataset:${PARAMS_FILE}"
 
   opensearch-benchmark execute-test \
     --workload=vectorsearch \
@@ -202,6 +203,7 @@ if [ "$DO_SEARCH" = true ]; then
     --kill-running-processes \
     --workload-repository=$HOME/opensearch-benchmark-workloads \
     --distribution-version=$DISTRIBUTION_VERSION \
+    --user-tag="$user_tag" \
     --results-file="$results_file"
 
     # Check the status after completion

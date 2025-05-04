@@ -27,6 +27,9 @@ query_count = params.get("query_count", "unknown")
 query_k = params.get("query_k", "unknown")
 hnsw_ef_search = params.get("hnsw_ef_search", "unknown")
 hnsw_ef_construction = params.get("hnsw_ef_construction", "unknown")
+rescore_oversample_factor = params.get("rescore_oversample_factor", "unknown")
+target_throughput = params.get("target_throughput", "unknown")
+search_clients = params.get("search_clients", "unknown")
 
 # Build markdown string
 header_md = f"""# Benchmark Metadata
@@ -43,7 +46,9 @@ header_md = f"""# Benchmark Metadata
 - **Query K**: {query_k}
 - **hnsw_ef_search**: {hnsw_ef_search}
 - **hnsw_ef_construction**: {hnsw_ef_construction}
-
+- **rescore_oversample_factor**: {rescore_oversample_factor}
+- **target_throughput**: {target_throughput}
+- **search_clients**: {search_clients}
 ---
 
 # Benchmark Results
