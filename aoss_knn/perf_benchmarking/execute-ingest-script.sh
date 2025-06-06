@@ -155,8 +155,6 @@ if [ "$DO_INGESTION" = true ]; then
     # Check the status after completion
     check_index_status
 
-  done
-
   echo "==================================================================="
   echo "Indexing completed. Final index status:"
   check_index_status
