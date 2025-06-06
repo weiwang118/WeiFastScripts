@@ -106,7 +106,7 @@ if [ "$DO_INDEX_MANAGEMENT" = true ]; then
   # Use direct command execution without variable expansion for the base command
   opensearch-benchmark execute-test \
     --workload=vectorsearch \
-    --target-hosts=$ENDPOINT:443 \
+    --target-hosts=$ENDPOINT \
     --client-options="$CLIENT_OPTIONS" \
     --workload-params=$PARAMS_FILE \
     --test-procedure=no-train-test-index-with-merge \
@@ -132,51 +132,33 @@ fi
 if [ "$DO_INGESTION" = true ]; then
   echo "Starting data ingestion process..."
 
-  # Main loop to process batches
-  for ((offset=0; offset<TOTAL_VECTORS; offset+=BATCH_SIZE)); do
-    batch_num=$((offset/BATCH_SIZE + 1))
-    total_batches=$((TOTAL_VECTORS/BATCH_SIZE))
+  # Build the results file name with the batch number
+  results_file="~/${SCENARIO}_indexing.out"
 
-    echo "==================================================================="
-    echo "Starting batch $batch_num of $total_batches (offset: $offset)"
-    echo "==================================================================="
+  # Build the user tag with the batch number
+  user_tag="scenario:$SCENARIO,procedure:knn-batch-ingest,version:$VERSION_TAG,dataset:${PARAMS_FILE}"
 
-    # Update parameters file
-    update_params $offset $BATCH_SIZE
-
-    # Build the results file name with the batch number
-    results_file="~/${SCENARIO}_indexing_batch_${batch_num}.out"
-
-    # Build the user tag with the batch number
-    user_tag="scenario:$SCENARIO,procedure:knn-batch-ingest,version:$VERSION_TAG,batch-ingest:true,batch:${batch_num}_of_${total_batches},dataset:${PARAMS_FILE}"
-
-    echo "Executing benchmark for batch $batch_num..."
-    opensearch-benchmark execute-test \
-      --workload=vectorsearch \
-      --target-hosts=$ENDPOINT:443 \
-      --client-options="$CLIENT_OPTIONS" \
-      --workload-params=$PARAMS_FILE \
-      --test-procedure=no-train-test-index-with-merge \
-      --include-tasks="custom-vector-bulk,refresh-target-index,refresh-target-index-before-force-merge,force-merge-segments,refresh-target-index-after-force-merge" \
-      --pipeline=benchmark-only \
-      --kill-running-processes \
-      --workload-repository=$HOME/opensearch-benchmark-workloads \
-      --distribution-version=$DISTRIBUTION_VERSION \
-      --user-tag="$user_tag" \
-      --results-file="$results_file"
+  opensearch-benchmark execute-test \
+    --workload=vectorsearch \
+    --target-hosts=$ENDPOINT \
+    --client-options="$CLIENT_OPTIONS" \
+    --workload-params=$PARAMS_FILE \
+    --test-procedure=no-train-test-index-with-merge \
+    --include-tasks="custom-vector-bulk,refresh-target-index,refresh-target-index-before-force-merge,force-merge-segments,refresh-target-index-after-force-merge" \
+    --pipeline=benchmark-only \
+    --kill-running-processes \
+    --workload-repository=$HOME/opensearch-benchmark-workloads \
+    --distribution-version=$DISTRIBUTION_VERSION \
+    --user-tag="$user_tag" \
+    --results-file="$results_file"
 
     # Check the status after completion
     check_index_status
 
-    # Sleep between batches (if not the last batch)
-    if [ $((offset + BATCH_SIZE)) -lt $TOTAL_VECTORS ]; then
-      echo "Sleeping for $SLEEP_TIME seconds before starting next batch..."
-      sleep $SLEEP_TIME
-    fi
   done
 
   echo "==================================================================="
-  echo "All batches completed. Final index status:"
+  echo "Indexing completed. Final index status:"
   check_index_status
   echo "==================================================================="
 fi
@@ -194,7 +176,7 @@ if [ "$DO_SEARCH" = true ]; then
 
   opensearch-benchmark execute-test \
     --workload=vectorsearch \
-    --target-hosts=$ENDPOINT:443 \
+    --target-hosts=$ENDPOINT \
     --client-options="$CLIENT_OPTIONS" \
     --workload-params=$PARAMS_FILE \
     --test-procedure=search-only \
