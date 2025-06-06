@@ -55,15 +55,15 @@ fi
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 # Configuration - use environment variables if available, otherwise use defaults
 # TOTAL_VECTORS=${TOTAL_VECTORS:-10000000}         # Total vectors to ingest
-TOTAL_VECTORS=${TOTAL_VECTORS:-1000000}         # Total vectors to ingest
-BATCH_SIZE=${BATCH_SIZE:-1000000}                # Vectors per batch
+TOTAL_VECTORS=${TOTAL_VECTORS:-8000000}         # Total vectors to ingest
+BATCH_SIZE=${BATCH_SIZE:-8000000}                # Vectors per batch
 SLEEP_TIME=${SLEEP_TIME:-120}                     # Sleep time in seconds between batches
-PARAMS_FILE=${PARAMS_FILE:-"params/mxbai-msmarco_1M_1024D_disk_mode.json"}
-DISTRIBUTION_VERSION=${DISTRIBUTION_VERSION:-"2.17.0-beta"}
+PARAMS_FILE=${PARAMS_FILE:-"params/snowflake_8M_768D_in-memory.json"}
+DISTRIBUTION_VERSION=${DISTRIBUTION_VERSION:-"3.0.0"}
 AWS_REGION=${AWS_REGION:-"us-east-1"}
-SCENARIO_BASE=${SCENARIO:-"mxbai_disk_217beta"}
+SCENARIO_BASE=${SCENARIO:-"snowflake_3.0.0_in-memory_efs"}
 SCENARIO="${SCENARIO_BASE}_${TIMESTAMP}"  # Add timestamp to scenario name
-VERSION_TAG=${VERSION_TAG:-"217-beta"}
+VERSION_TAG=${VERSION_TAG:-"3.0.0"}
 
 echo "Configuration:"
 echo "ENDPOINT: $ENDPOINT"
@@ -74,7 +74,7 @@ echo "DISTRIBUTION_VERSION: $DISTRIBUTION_VERSION"
 echo "AWS_REGION: $AWS_REGION"
 
 # Use the exact client options that work in your command
-CLIENT_OPTIONS="max_retries:5,retry_on_timeout:true,retry_on_error:True,timeout:900,use_ssl:True,verify_certs:True,region:$AWS_REGION,amazon_aws_log_in:environment"
+CLIENT_OPTIONS="max_retries:5,retry_on_timeout:true,retry_on_error:True,timeout:900,region:$AWS_REGION"
 
 # Function to update the parameters file with new offset and batch size
 update_params() {
@@ -92,7 +92,7 @@ update_params() {
 check_index_status() {
 #   ada credentials update --account=875378785276 --role=Admin --once
   echo "Checking index status..."
-  awscurl --service aoss "${ENDPOINT}/_cat/indices?v"
+  awscurl "${ENDPOINT}/_cat/indices?v"
 }
 
 OSB_START_TIME=$(TZ=America/Los_Angeles date "+%Y-%m-%d %H:%M:%S PDT")
@@ -109,7 +109,7 @@ if [ "$DO_INDEX_MANAGEMENT" = true ]; then
     --target-hosts=$ENDPOINT:443 \
     --client-options="$CLIENT_OPTIONS" \
     --workload-params=$PARAMS_FILE \
-    --test-procedure=knn-no-train-test-small \
+    --test-procedure=no-train-test-index-with-merge \
     --include-tasks="delete-target-index,create-target-index" \
     --pipeline=benchmark-only \
     --kill-running-processes \
@@ -156,8 +156,8 @@ if [ "$DO_INGESTION" = true ]; then
       --target-hosts=$ENDPOINT:443 \
       --client-options="$CLIENT_OPTIONS" \
       --workload-params=$PARAMS_FILE \
-      --test-procedure=knn-no-train-test-small \
-      --include-tasks="custom-vector-bulk-offset" \
+      --test-procedure=no-train-test-index-with-merge \
+      --include-tasks="custom-vector-bulk,refresh-target-index,refresh-target-index-before-force-merge,force-merge-segments,refresh-target-index-after-force-merge" \
       --pipeline=benchmark-only \
       --kill-running-processes \
       --workload-repository=$HOME/opensearch-benchmark-workloads \
@@ -197,8 +197,7 @@ if [ "$DO_SEARCH" = true ]; then
     --target-hosts=$ENDPOINT:443 \
     --client-options="$CLIENT_OPTIONS" \
     --workload-params=$PARAMS_FILE \
-    --test-procedure=no-train-test-aoss \
-    --include-tasks="prod-queries" \
+    --test-procedure=search-only \
     --pipeline=benchmark-only \
     --kill-running-processes \
     --workload-repository=$HOME/opensearch-benchmark-workloads \
