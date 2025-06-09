@@ -185,6 +185,7 @@ if [ "$DO_SEARCH" = true ]; then
     --user-tag="$user_tag" \
     --results-file="$results_file"
 
+    python3 collect_storage_stats.py "$SCENARIO"
     # Check the status after completion
     check_index_status
     echo "⏳ Sleeping 20 seconds to allow result file to flush..."
