@@ -30,7 +30,7 @@ def get_ebs_stats() -> List[Dict[str, Any]]:
     try:
         # Find the device mounted as root (/)
         df_result = subprocess.run(
-            ["df", "-h", "/data"],
+            ["df", "-h", "/"],
             capture_output=True,
             text=True,
             check=True
